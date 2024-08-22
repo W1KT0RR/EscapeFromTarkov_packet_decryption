@@ -6,7 +6,6 @@
         {
             var responseType = bResponse.GetType();
 
-            
             var responseDataField = responseType.GetField("responseData");
             var responseDataLengthField = responseType.GetField("responseDataLength");
 
@@ -26,10 +25,12 @@
                 byte[] decryptedData = DecryptData(cipherText, cipherBytesLength, Key, IV);
                 string decompressedData = DecompressData(decryptedData);
 
-                // make sum  json
+                //json,key,iv
                 var logEntry = new
                 {
                     Timestamp = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"),
+                    Key = BitConverter.ToString(Key).Replace("-", ""),
+                    IV = BitConverter.ToString(IV).Replace("-", ""),
                     DecompressedData = decompressedData
                 };
 
@@ -101,14 +102,13 @@
         {
             try
             {
-               
                 Directory.CreateDirectory(JsonLogDirectory);
 
-                //timestamp swag !
+                // timestamp
                 string fileName = $"{DateTime.Now:yyyy-MM-dd_HH-mm-ss-fff}.json";
                 string filePath = Path.Combine(JsonLogDirectory, fileName);
 
-                // Serialize the hell
+                // serializee
                 string jsonLog = JsonConvert.SerializeObject(logEntry, Formatting.Indented);
                 File.WriteAllText(filePath, jsonLog);
             }
